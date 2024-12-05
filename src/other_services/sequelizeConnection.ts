@@ -24,4 +24,20 @@ export const sequelizeSync = async () => {await sequelize.sync()
     .catch((error) => console.error('Error syncing models:', error));
 };
 
+// Function to authenticate and sync the database
+export const sequelizeInit = async () => {
+    try {
+        console.log("Connecting to the database...");
+        await sequelize.authenticate();
+        console.log("Database connection established successfully.");
+
+        console.log("Synchronizing database schema...");
+        await sequelize.sync({ alter: true }); // Adjust schema to match models
+        console.log("Database schema synchronized successfully.");
+    } catch (error) {
+        console.error("Error connecting or synchronizing the database:", error);
+        throw error;
+    }
+};
+
 export default sequelize;
