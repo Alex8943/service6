@@ -135,12 +135,12 @@ Review.init(
         isBlocked: {
             type: DataTypes.BOOLEAN,
             defaultValue: false,
-        },
+        },        
     },
     {
         sequelize,
         modelName: 'Review',
-        tableName: 'review',
+        tableName: 'reviews',
         timestamps: false,
         paranoid: true,
     }

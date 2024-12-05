@@ -71,9 +71,9 @@ function generateUuid() {
 
 
     const [userResponse, mediaResponse] = await Promise.all([
-        fetchDataFromQueue("user-service", { userId: 10 }),
-        fetchDataFromQueue("media-service", { mediaId: 1 }),
-        fetchDataFromQueue("genre-service", { reviewId: 1 }),
+        await fetchDataFromQueue("user-service", { userId: 1 }),
+        await fetchDataFromQueue("media-service", { mediaId: 2 }),
+        await fetchDataFromQueue("genre-service", { reviewId: 2 }),
     ]);
 
     console.log("User response:", userResponse);

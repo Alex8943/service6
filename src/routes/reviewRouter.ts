@@ -5,67 +5,64 @@ import { fetchDataFromQueue } from "../other_services/rabbitMQ";
 
 const router = express.Router();
 
-// Route to fetch reviews
 router.get("/reviews/:max", async (req, res) => {
     try {
-        console.log("Response from rabbitMQ: ", req.params.max);
-        console.log("RabbotMQ user-service: ", fetchDataFromQueue("user-service", { userId: req.params.max }));
-        console.log("RabbotMQ media-service: ", fetchDataFromQueue("media-service", { mediaId: req.params.max }));
-        console.log("RabbotMQ genre-service: ", fetchDataFromQueue("genre-service", { reviewId: req.params.max }));
-        const max = parseInt(req.params.max);
-        const reviews = await getRangeOfReviews(max); // Use the updated function
-        console.log("Specific reviews fetched successfully");
-        res.status(200).send(reviews); // Send enriched reviews to the client
+
+        
+        const max = parseInt(req.params.max, 10);
+
+        console.log("Params:", max);
+
+        const reviews = await getRangeOfReviews(max);
+       
+        res.status(200).json(reviews); // Send enriched reviews to the client
     } catch (error) {
         console.error("Error fetching specific reviews:", error);
         res.status(500).send("Something went wrong while fetching specific reviews");
     }
 });
 
-
 export async function getRangeOfReviews(max: number) {
     try {
-        // Step 1: Fetch review data from Database 2
         const reviews = await Reviews.findAll({
-            where: {
-                isBlocked: false,
-            },
-            limit: max,
+            where: { isBlocked: 0 }, // Use 0 instead of false
+            limit: max
         });
 
-        // Step 2: Enrich each review with data from user-service, media-service, and genre-service
+        console.log("Reviews fetched from database:", reviews);
+
+        if (reviews.length === 0) {
+            console.log("No reviews found in the database.");
+            return [];
+        }
+
         const enrichedReviews = await Promise.all(
             reviews.map(async (review) => {
-                // Fetch related data using RabbitMQ
                 const [user, media, genres] = await Promise.all([
-                    fetchDataFromQueue("user-service", { userId: review.user_fk }), // Fetch user data
-                    fetchDataFromQueue("media-service", { mediaId: review.media_fk }), // Fetch media data
-                    fetchDataFromQueue("genre-service", { reviewId: review.id }), // Fetch genres
+                    fetchDataFromQueue("user-service", { userId: review.user_fk }),
+                    fetchDataFromQueue("media-service", { mediaId: review.media_fk }),
+                    fetchDataFromQueue("genre-service", { reviewId: review.id }),
                 ]);
 
-                console.log("##### ###### \nData from rabbitMQ: \nUser: ", user, "\nMedia: ",media, "\nGenres: ", genres);
-
-                // Combine all data into a single object
                 return {
                     id: review.id,
                     title: review.title,
                     description: review.description,
                     createdAt: review.createdAt,
                     updatedAt: review.updatedAt,
-                    user, // User details from user-service
-                    media, // Media details from media-service
-                    genres, // Genres from genre-service
+                    user: user || { error: "User not found" },
+                    media: media || { error: "Media not found" },
+                    genres: genres || [],
                 };
             })
         );
 
-        return enrichedReviews; // Return the fully enriched reviews
+        return enrichedReviews;
     } catch (error) {
-        logger.error("Error fetching specific reviews: ", error);
+        console.error("Error fetching specific reviews:", error);
         throw error;
     }
 }
-
 
 
 export default router;
