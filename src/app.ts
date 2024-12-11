@@ -7,6 +7,7 @@ import { sequelizeAuth, sequelizeInit } from './other_services/sequelizeConnecti
 import { setupQueues } from "./other_services/rabbitMQ";
 import {seedData} from '../seed_data';
 const app = express();
+
 app.use(cors());
 
 app.use(express.json()); // for parsing application/json

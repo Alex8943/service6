@@ -26,7 +26,7 @@ export async function getRangeOfReviews(max: number) {
     try {
         const reviews = await Reviews.findAll({
             where: { isBlocked: 0 }, // Use 0 instead of false
-            limit: max
+            limit: 10
         });
 
         console.log("Reviews fetched from database:", reviews);
