@@ -2,14 +2,14 @@ import express from "express";
 import { Review as Reviews} from "../other_services/model/seqModel";
 import logger from "../other_services/winstonLogger";
 import { fetchDataFromQueue } from "../other_services/rabbitMQ";
+import verifyUser from "./authenticateUser";
 
 const router = express.Router();
 
-router.get("/reviews/:max", async (req, res) => {
+router.get("/reviews/:max", verifyUser, async (req, res) => {
     try {
-
-        
-        const max = parseInt(req.params.max, 10);
+    
+        const max = parseInt(req.params.max);
 
         console.log("Params:", max);
 
@@ -25,8 +25,8 @@ router.get("/reviews/:max", async (req, res) => {
 export async function getRangeOfReviews(max: number) {
     try {
         const reviews = await Reviews.findAll({
-            where: { isBlocked: 0 }, // Use 0 instead of false
-            limit: 10
+            where: { isBlocked: 0 },
+            limit: max,
         });
 
         console.log("Reviews fetched from database:", reviews);
