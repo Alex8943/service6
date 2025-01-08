@@ -5,7 +5,7 @@ import reviewRouter from './routes/reviewRouter';
 import {testDBConnection} from './db_service/db_connection';
 import { sequelizeAuth } from './other_services/sequelizeConnection';
 import { setupQueues } from "./other_services/rabbitMQ";
-import { seedData2 } from './db_service/database2/seed_data';
+//import { seedData2 } from './db_service/database2/seed_data';
 
 const app = express();
 
