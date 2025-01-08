@@ -5,10 +5,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const pool = mysql.createPool({
-    host: process.env.dev_host,
-    user: process.env.dev_user,
-    password: process.env.dev_password,
-    database: process.env.dev_database
+    host: process.env.dev_host2,
+    user: process.env.dev_user2,
+    password: process.env.dev_password2,
+    database: process.env.dev_database2
 });
 
 export async function testDBConnection() {

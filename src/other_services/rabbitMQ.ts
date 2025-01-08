@@ -25,7 +25,7 @@ export async function setupQueues() {
 
         for (const queue of queues) {
             await channel.assertQueue(queue, { durable: false });
-            console.log(`Queue "${queue}" is ready.`);
+            
         }        
 
         console.log("All necessary queues have been set up.");
@@ -39,10 +39,6 @@ export const fetchDataFromQueue = async (queue: string, message: any) => {
     const { channel, connection } = await createChannel();
     const replyQueue = await channel.assertQueue("", { exclusive: true });
     const correlationId = generateUuid();
-
-    console.log(`Sending message to queue: ${queue}`);
-    console.log(`Message: ${JSON.stringify(message)}`);
-    console.log(`Correlation ID: ${correlationId}`);
 
     return new Promise((resolve, reject) => {
         channel.consume(
@@ -73,19 +69,10 @@ function generateUuid() {
     return Math.random().toString() + Math.random().toString() + Math.random().toString();
 }
 
-(async () => {
-    const genreResponse = await fetchDataFromQueue("genre-service", { reviewId: 10 });
-    console.log("Genre response from RabbitMQ:", genreResponse);
 
 
-    const [userResponse, mediaResponse] = await Promise.all([
-        await fetchDataFromQueue("user-service", { userId: 1 }),
-        await fetchDataFromQueue("media-service", { mediaId: 2 }),
-        await fetchDataFromQueue("genre-service", { reviewId: 2 }),
-    ]);
+    fetchDataFromQueue("user-service", { userId: 1 })
+     fetchDataFromQueue("media-service", { mediaId: 2 })
+     fetchDataFromQueue("genre-service", { reviewId: 2 })
 
-    console.log("User response:", userResponse);
-    console.log("Media response:", mediaResponse);
-    console.log("Genre response:", genreResponse);
 
-})();
