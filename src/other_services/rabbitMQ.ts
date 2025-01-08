@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const LOCAL_RABBITMQ_URL = process.env.rabbitmq_url || "amqp://localhost"; 
+
+console.log("RabbitMQ URL:", LOCAL_RABBITMQ_URL);
 if(!LOCAL_RABBITMQ_URL) {
   throw new Error("RabbitMQ URL is not provided");
 }
