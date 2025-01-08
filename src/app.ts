@@ -5,6 +5,7 @@ import reviewRouter from './routes/reviewRouter';
 import {testDBConnection} from './db_service/db_connection';
 import { sequelizeAuth } from './other_services/sequelizeConnection';
 import { setupQueues } from "./other_services/rabbitMQ";
+import { seedData2 } from './db_service/database2/seed_data';
 
 const app = express();
 
@@ -12,7 +13,8 @@ app.use(cors());
 
 app.use(express.json()); // for parsing application/json
 
-//testDBConnection();
+testDBConnection();
+//seedData2();
 //createBackup();
 
 
@@ -25,7 +27,7 @@ process.on('SIGINT', () => {
   });
 
 app.listen(3006, async () => {
-    //await setupQueues();
+    await setupQueues();
     console.log("Server6 is running on port 3006");
 });
 
