@@ -9,6 +9,7 @@ import { setupQueues } from "./other_services/rabbitMQ";
 
 const app = express();
 
+
 app.use(cors());
 
 app.use(express.json()); // for parsing application/json
