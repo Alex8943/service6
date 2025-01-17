@@ -6,14 +6,13 @@ import verifyUser from "./authenticateUser";
 
 const router = express.Router();
 
-router.get("/reviews/:max", verifyUser, async (req, res) => {
+router.get("/reviews/:max/:offset", verifyUser, async (req, res) => {
     try {
-    
-        const max = parseInt(req.params.max);
 
-        console.log("Params:", max);
+        const max = parseInt(req.params.max, 10); // Number of users to fetch
+        const offset = parseInt(req.params.offset, 10); // Starting point for fetching users
 
-        const reviews = await getRangeOfReviews(max);
+        const reviews = await getRangeOfReviews(max, offset);
        
         res.status(200).json(reviews); // Send enriched reviews to the client
     } catch (error) {
@@ -22,11 +21,12 @@ router.get("/reviews/:max", verifyUser, async (req, res) => {
     }
 });
 
-export async function getRangeOfReviews(max: number) {
+export async function getRangeOfReviews(max: number, offset: number) {
     try {
         const reviews = await Reviews.findAll({
-            where: { isBlocked: 0 },
+            where: { isBlocked: false },
             limit: max,
+            offset: offset,     
         });
 
         console.log("Reviews fetched from database:", reviews);
